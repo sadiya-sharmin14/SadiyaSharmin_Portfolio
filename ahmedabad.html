@@ -1,1 +1,615 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Interactive GIS and remote sensing study of urban expansion and environmental change across the AUDA region, Ahmedabad, 2015–2025.">
+<title>Ahmedabad Urban Climate Explorer | Sadiya Sharmin</title>
+<style>
+:root {
+  --green: #244d3b;
+  --green-light: #e9f0e9;
+  --ink: #202a25;
+  --muted: #65716a;
+  --line: #dce3dc;
+  --paper: #f5f7f3;
+  --white: #fff;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.6;
+}
+a { color: var(--green); }
+button, input, select { font: inherit; }
+button, select, input {
+  border: 1px solid #cbd5cc;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: white;
+  color: var(--ink);
+}
+button { cursor: pointer; }
+button:hover, .button:hover { opacity: .85; }
+header {
+  background: var(--green);
+  color: white;
+  padding: 18px 5%;
+}
+.nav {
+  max-width: 1180px;
+  margin: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.nav a { color: white; text-decoration: none; margin-left: 14px; }
+.nav .brand { font-weight: bold; margin-left: 0; }
+main { max-width: 1180px; padding: 28px 20px 60px; margin: auto; }
+.hero {
+  padding: 34px;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  margin-bottom: 22px;
+}
+.eyebrow {
+  color: var(--green);
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+}
+h1 { font-size: clamp(30px, 5vw, 48px); line-height: 1.12; margin: 8px 0 14px; }
+h2 { line-height: 1.25; margin: 0 0 10px; font-size: clamp(23px, 3vw, 30px); }
+h3 { line-height: 1.35; margin: 10px 0 6px; }
+p { margin-top: 8px; }
+.muted { color: var(--muted); }
+.hero-stats, .stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 22px;
+}
+.stat, .panel, .gallery-card {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+}
+.stat { padding: 16px; }
+.stat strong { display: block; font-size: 25px; color: var(--green); }
+.stat span { font-size: 13px; color: var(--muted); }
+.panel { padding: 24px; margin: 20px 0; scroll-margin-top: 20px; }
+.section-head { margin-bottom: 16px; }
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin: 18px 0;
+}
+.toolbar input { flex: 1; min-width: 180px; }
+.toolbar select { max-width: 100%; }
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.gallery-card { padding: 12px; min-width: 0; overflow: hidden; }
+.gallery-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 390px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #eef1ed;
+}
+.gallery-card h3 { overflow-wrap: anywhere; font-size: 17px; }
+.gallery-card p { font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+.gallery-card a { display: inline-block; margin: 4px 0; }
+.featured-gif {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(220px, .8fr);
+  gap: 20px;
+  align-items: start;
+}
+.featured-gif img {
+  display: block;
+  width: 100%;
+  max-height: 470px;
+  object-fit: contain;
+  background: #eef1ed;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.button {
+  display: inline-block;
+  border-radius: 8px;
+  background: var(--green);
+  color: white;
+  padding: 10px 14px;
+  text-decoration: none;
+  border: 0;
+}
+.button.secondary { background: var(--green-light); color: var(--green); }
+.indicator-layout {
+  display: grid;
+  grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+  gap: 20px;
+}
+.finding {
+  background: var(--green-light);
+  border-radius: 12px;
+  padding: 18px;
+}
+.finding strong { color: var(--green); }
+.bar-chart { margin-top: 18px; }
+.bar-row { margin: 14px 0; }
+.bar-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+  margin-bottom: 5px;
+}
+.bar-track { background: #e8ede8; border-radius: 6px; overflow: hidden; }
+.bar-fill { background: var(--green); height: 20px; border-radius: 6px; min-width: 2px; }
+footer { padding: 24px 5%; background: #e8eee8; text-align: center; color: var(--muted); }
+.notice { font-size: 13px; color: var(--muted); }
+@media (max-width: 720px) {
+  main { padding: 18px 12px 40px; }
+  .hero, .panel { padding: 18px; }
+  .hero-stats, .stat-grid { grid-template-columns: 1fr; }
+  .gallery-grid, .featured-gif, .indicator-layout { grid-template-columns: 1fr; }
+  .nav a { margin-left: 0; margin-right: 10px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <a class="brand" href="index.html">Sadiya Sharmin · Portfolio</a>
+    <nav aria-label="Main navigation">
+      <a href="#animations">Animations</a>
+      <a href="#indicators">Indicators</a>
+      <a href="#maps">Maps</a>
+      <a href="#charts">Charts</a>
+      <a href="#report">Report</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <p class="eyebrow">Interactive GIS and remote sensing study · Gujarat, India</p>
+    <h1>Ahmedabad Urban Climate Explorer</h1>
+    <p class="muted">
+      Exploring urban expansion and environmental change across the
+      Ahmedabad Urban Development Authority (AUDA) region between 2015 and 2025.
+      Select indicators, explore maps and charts, and watch the uploaded
+      time-series animations.
+    </p>
+    <div class="hero-stats">
+      <div class="stat">
+        <strong>1,866 km²</strong>
+        <span>Approximate study area</span>
+      </div>
+      <div class="stat">
+        <strong>+13.45%</strong>
+        <span>Reported built-up area growth, 2015–2025</span>
+      </div>
+      <div class="stat">
+        <strong>2015–2025</strong>
+        <span>Urban change study period</span>
+      </div>
+    </div>
+    <p class="notice">
+      Study scope: AUDA region, not Ahmedabad Municipal Corporation (AMC).
+      Flood susceptibility outputs are preliminary.
+    </p>
+  </section>
+
+  <!-- 01: GIF ANIMATIONS FIRST -->
+  <section class="panel" id="animations">
+    <div class="section-head">
+      <p class="eyebrow">01 · Temporal analysis</p>
+      <h2>Watch the region change over time</h2>
+      <p class="muted">
+        Explore the uploaded animations of built-up expansion, vegetation,
+        land surface temperature and relative heat anomaly.
+      </p>
+    </div>
+
+    <div class="featured-gif">
+      <div>
+        <img id="featuredGifImage"
+             src="04_Ahmedabad_Urban_Climate_Analysis/GIFs/AUDA_Builtup_Year_on_Year_2015_2025.gif"
+             alt="Animated built-up expansion from 2015 to 2025">
+        <p class="notice">Animations play automatically when supported by your browser.</p>
+      </div>
+      <div>
+        <label for="gifSelect"><strong>Choose featured animation</strong></label>
+        <select id="gifSelect" style="display:block;width:100%;margin-top:8px">
+          <option value="0">Built-up expansion · 2015–2025</option>
+          <option value="1">NDVI change · 2015–2025</option>
+          <option value="2">LST annual median · 2016–2025</option>
+          <option value="3">LST annual median · 10 sec per year</option>
+          <option value="4">LST annual median · slow</option>
+          <option value="5">Relative heat anomaly · 2016–2025</option>
+        </select>
+        <h3 id="featuredGifTitle">Built-up expansion, 2015–2025</h3>
+        <p id="featuredGifDescription" class="muted">
+          Animated visualisation of built-up area change over the study period.
+        </p>
+        <a id="openGifLink" class="button secondary"
+           href="04_Ahmedabad_Urban_Climate_Analysis/GIFs/AUDA_Builtup_Year_on_Year_2015_2025.gif"
+           target="_blank" rel="noopener">Open animation separately</a>
+      </div>
+    </div>
+
+    <h3 style="margin-top:28px">All animations</h3>
+    <div id="gifGallery" class="gallery-grid"></div>
+  </section>
+
+  <!-- INTERACTIVE INDICATORS -->
+  <section class="panel" id="indicators">
+    <p class="eyebrow">Interactive exploration</p>
+    <h2>Explore the indicators</h2>
+    <p class="muted">Choose an indicator to view its findings and associated map.</p>
+
+    <div class="toolbar">
+      <label for="indicatorSelect"><strong>Indicator</strong></label>
+      <select id="indicatorSelect">
+        <option value="urban">Urban expansion</option>
+        <option value="ndvi">Vegetation change (NDVI)</option>
+        <option value="lst">Land surface temperature</option>
+        <option value="rain">Rainfall</option>
+        <option value="terrain">Terrain and slope</option>
+        <option value="flood">Flood susceptibility</option>
+        <option value="heat">Relative heat anomaly</option>
+        <option value="ndwi">Water index (NDWI)</option>
+      </select>
+    </div>
+
+    <div class="indicator-layout">
+      <div class="finding">
+        <p class="eyebrow">Finding</p>
+        <h3 id="indicatorTitle">Built-up area change, 2015–2025</h3>
+        <p id="indicatorFinding"></p>
+        <p><strong>Method / context</strong></p>
+        <p id="indicatorMethod" class="muted"></p>
+        <p id="indicatorInterpretation"></p>
+      </div>
+      <div>
+        <div id="indicatorChart" class="bar-chart" aria-live="polite"></div>
+        <img id="indicatorMap" alt="Selected indicator map"
+             style="display:block;width:100%;max-height:380px;object-fit:contain;border-radius:10px;background:#eef1ed;margin-top:18px">
+        <p><a id="indicatorMapLink" target="_blank" rel="noopener">Open selected map</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02: MAPS -->
+  <section class="panel" id="maps">
+    <div class="section-head">
+      <p class="eyebrow">02 · Spatial analysis</p>
+      <h2>Maps gallery</h2>
+      <p class="muted">
+        Browse the spatial outputs for urban growth, vegetation, temperature,
+        rainfall, terrain and preliminary flood susceptibility.
+      </p>
+    </div>
+    <div class="toolbar">
+      <label for="mapSearch"><strong>Search maps</strong></label>
+      <input id="mapSearch" type="search" placeholder="e.g. NDVI, rainfall, slope">
+    </div>
+    <div id="mapGallery" class="gallery-grid"></div>
+  </section>
+
+  <!-- 03: CHARTS -->
+  <section class="panel" id="charts">
+    <div class="section-head">
+      <p class="eyebrow">03 · Quantitative evidence</p>
+      <h2>Charts and statistical analysis</h2>
+      <p class="muted">
+        Browse the uploaded statistical charts. Filter by subject or search
+        for a specific indicator.
+      </p>
+    </div>
+    <div class="toolbar">
+      <label for="chartCategory"><strong>Category</strong></label>
+      <select id="chartCategory">
+        <option value="all">All charts</option>
+        <option value="urban">Urban growth</option>
+        <option value="ndvi">Vegetation (NDVI)</option>
+        <option value="ndwi">Water index (NDWI)</option>
+        <option value="lst">Land surface temperature</option>
+        <option value="uhi">Urban heat</option>
+        <option value="rain">Rainfall</option>
+        <option value="flood">Flood susceptibility</option>
+        <option value="terrain">Terrain</option>
+      </select>
+      <label for="chartSearch"><strong>Search</strong></label>
+      <input id="chartSearch" type="search" placeholder="Search chart names">
+    </div>
+    <div id="chartGallery" class="gallery-grid"></div>
+  </section>
+
+  <!-- REPORT -->
+  <section class="panel" id="report">
+    <p class="eyebrow">Project documentation</p>
+    <h2>Read the full report</h2>
+    <p class="muted">
+      Consult the report for the study design, data sources, methods,
+      results and interpretation.
+    </p>
+    <a class="button"
+       href="04_Ahmedabad_Urban_Climate_Analysis/Ahmedabad_Urban_Climate_Analysis_Report.pdf"
+       target="_blank" rel="noopener">Open project report (PDF)</a>
+    <p style="margin-top:18px"><a href="index.html">← Back to main portfolio</a></p>
+  </section>
+</main>
+
+<footer>
+  <p>Ahmedabad Urban Climate Analysis · GIS, remote sensing and spatial analysis</p>
+  <p>Created by Sadiya Sharmin · <a href="index.html">Portfolio home</a></p>
+</footer>
+
+<script>
+const BASE = "04_Ahmedabad_Urban_Climate_Analysis/";
+const MAPS = BASE + "Maps/";
+const CHARTS = BASE + "Charts/";
+const GIFS = BASE + "GIFs/";
+
+const maps = [
+  ["01_Builtup_Change_2015_2025.png","Urban expansion","Built-up change, 2015–2025"],
+  ["02_NDVI_2025.png","Vegetation","NDVI, 2025"],
+  ["03_NDVI_2025_Classified.png","Vegetation","Classified NDVI, 2025"],
+  ["04_NDVI_Change_2015_2025.png","Vegetation","NDVI change, 2015–2025"],
+  ["05_Land_Surface_Temperature_2025.png","Temperature","Land surface temperature, 2025"],
+  ["06_Relative_Heat_Anomaly_2025.png","Urban heat","Relative heat anomaly, 2025"],
+  ["07_NDWI_2025.png","Water index","NDWI, 2025"],
+  ["08_Annual_Rainfall_2025.png","Rainfall","Annual rainfall, 2025"],
+  ["09_Elevation.png","Terrain","Elevation"],
+  ["10_Slope.png","Terrain","Slope"],
+  ["11_Flood_Susceptibility_Preliminary.png","Flood susceptibility","Preliminary flood susceptibility"]
+];
+
+const charts = [
+  ["AUDA_Builtup_Area_2015_2025.png","urban","Built-up area, 2015–2025"],
+  ["BuiltUp_Area_by_Susceptibility.png","flood","Built-up area by susceptibility"],
+  ["AUDA_NDVI_Change_Area.png","ndvi","NDVI change area"],
+  ["AUDA_NDVI_Change_Area_JunDec_2015_2025.png","ndvi","NDVI change, June–December"],
+  ["01_NDWI_Histogram.png","ndwi","NDWI histogram"],
+  ["02_NDWI_Density_Distribution.png","ndwi","NDWI density distribution"],
+  ["AUDA_NDWI_2025_Histogram_300dpi.png","ndwi","NDWI histogram, 2025"],
+  ["AUDA_LST_2025_Distribution_Histogram.png","lst","LST distribution, 2025"],
+  ["AUDA_LST_Annual_Statistics_2016_2025.png","lst","Annual LST statistics, 2016–2025"],
+  ["AUDA_LST_Median_Interquartile_Range.png","lst","LST median and interquartile range"],
+  ["AUDA_LST_Temperature_Band_Area_2016_2025.png","lst","Temperature band area"],
+  ["AUDA_UHI_Annual_Median_IQR_2016_2025.png","uhi","Annual UHI median and IQR"],
+  ["AUDA_UHI_Hotspot_Percentage_2016_2025.png","uhi","UHI hotspot percentage"],
+  ["AUDA_Rainfall_Statistics_2025.png","rain","Rainfall statistics, 2025"],
+  ["Annual_Rainfall_Distribution.png","rain","Annual rainfall distribution"],
+  ["AUDA_Flood_Susceptibility_Area_Chart.png","flood","Flood susceptibility area"],
+  ["Slope_Distribution.png","terrain","Slope distribution"]
+];
+
+const gifs = [
+  ["AUDA_Builtup_Year_on_Year_2015_2025.gif","Built-up expansion, 2015–2025","Urban expansion"],
+  ["AUDA_NDVI_2015_2025.gif","NDVI change, 2015–2025","Vegetation"],
+  ["AUDA_LST_2016_2025_Annual_Median.gif","LST annual median, 2016–2025","Temperature"],
+  ["AUDA_LST_2016_2025_Annual_Median_10sec_per_year.gif","LST annual median — 10 sec per year","Temperature"],
+  ["AUDA_LST_2016_2025_Annual_Median_Slow.gif","LST annual median — slow","Temperature"],
+  ["AUDA_UHI_Relative_Heat_Anomaly_2016_2025.gif","Relative heat anomaly, 2016–2025","Urban heat"]
+];
+
+const indicators = {
+  urban: {
+    title: "Built-up area change, 2015–2025",
+    finding: "Built-up area increased from 405.77 km² in 2015 to 460.34 km² in 2025: a reported increase of 54.57 km² (+13.45%).",
+    method: "Comparison of built-up area across the study period.",
+    interpretation: "The results indicate substantial expansion of built-up land across the AUDA study area.",
+    map: maps[0][0],
+    bars: [{label:"2015",value:405.77},{label:"2025",value:460.34}]
+  },
+  ndvi: {
+    title: "Vegetation change (NDVI)",
+    finding: "Reported June–December change categories: 574.2 km² declining greenness, 678.1 km² little change and 614.5 km² increasing greenness.",
+    method: "NDVI-based analysis of vegetation and greenness.",
+    interpretation: "These are the reported area totals for the three categories; consult the report for the precise classification method.",
+    map: maps[3][0],
+    bars: [{label:"Declining",value:574.2},{label:"Little change",value:678.1},{label:"Increasing",value:614.5}]
+  },
+  lst: {
+    title: "Land surface temperature",
+    finding: "The project includes 2025 LST mapping and annual statistics for 2016–2025.",
+    method: "Land surface temperature analysis across the study period.",
+    interpretation: "The reported LST statistics fluctuated over 2016–2025. No additional temperature values are inferred here.",
+    map: maps[4][0],
+    bars: []
+  },
+  rain: {
+    title: "Annual rainfall",
+    finding: "Reported mean rainfall: 1,104.8 mm.",
+    method: "CHIRPS annual rainfall data for 2025.",
+    interpretation: "Refer to the report for the spatial and temporal aggregation details behind the reported mean.",
+    map: maps[7][0],
+    bars: []
+  },
+  terrain: {
+    title: "Terrain and slope",
+    finding: "Elevation and slope outputs are available for the study area.",
+    method: "Terrain analysis and spatial mapping.",
+    interpretation: "Terrain characteristics help describe the physical setting of the study area.",
+    map: maps[8][0],
+    bars: []
+  },
+  flood: {
+    title: "Preliminary flood susceptibility",
+    finding: "A preliminary five-class flood-susceptibility model and land-cover-by-susceptibility analysis were produced.",
+    method: "Preliminary spatial susceptibility classification.",
+    interpretation: "This is an exploratory susceptibility assessment, not a validated flood forecast.",
+    map: maps[10][0],
+    bars: []
+  },
+  heat: {
+    title: "Relative heat anomaly",
+    finding: "The project includes relative heat anomaly maps and animations for 2016–2025.",
+    method: "Urban heat-island and relative heat anomaly analysis.",
+    interpretation: "Explore the uploaded maps and animations; no additional numerical values are inferred here.",
+    map: maps[5][0],
+    bars: []
+  },
+  ndwi: {
+    title: "Water index (NDWI)",
+    finding: "Reported NDWI mean: −0.432; median: −0.456.",
+    method: "NDWI raster analysis and statistical distribution.",
+    interpretation: "The histogram and density chart are available below for further exploration.",
+    map: maps[6][0],
+    bars: []
+  }
+};
+
+function makeCard(src, title, description, alt) {
+  const card = document.createElement("article");
+  card.className = "gallery-card";
+  const img = document.createElement("img");
+  img.src = src;
+  img.alt = alt || title;
+  img.loading = "lazy";
+  img.onerror = () => {
+    img.alt = "File not found: " + src;
+    img.style.display = "none";
+    const error = document.createElement("p");
+    error.textContent = "This file could not be loaded. Check the exact filename in GitHub: " + src;
+    card.insertBefore(error, heading);
+  };
+  const heading = document.createElement("h3");
+  heading.textContent = title;
+  const caption = document.createElement("p");
+  caption.textContent = description;
+  const link = document.createElement("a");
+  link.href = src;
+  link.target = "_blank";
+  link.rel = "noopener";
+  link.textContent = "Open full file";
+  card.append(img, heading, caption, link);
+  return card;
+}
+
+function renderMaps() {
+  const query = document.getElementById("mapSearch").value.toLowerCase().trim();
+  const gallery = document.getElementById("mapGallery");
+  gallery.replaceChildren();
+  maps.filter(item => item.join(" ").toLowerCase().includes(query))
+    .forEach(([file, category, title]) => {
+      gallery.appendChild(makeCard(MAPS + file, title, category, title));
+    });
+}
+
+function renderCharts() {
+  const category = document.getElementById("chartCategory").value;
+  const query = document.getElementById("chartSearch").value.toLowerCase().trim();
+  const gallery = document.getElementById("chartGallery");
+  gallery.replaceChildren();
+  charts.filter(([file, cat, title]) =>
+    (category === "all" || category === cat) &&
+    (file + " " + cat + " " + title).toLowerCase().includes(query)
+  ).forEach(([file, cat, title]) => {
+    gallery.appendChild(makeCard(CHARTS + file, title, "Category: " + cat, title));
+  });
+}
+
+function showFeaturedGif() {
+  const index = Number(document.getElementById("gifSelect").value);
+  const [file, title, category] = gifs[index];
+  const src = GIFS + file;
+  document.getElementById("featuredGifImage").src = src;
+  document.getElementById("featuredGifImage").alt = title;
+  document.getElementById("featuredGifTitle").textContent = title;
+  document.getElementById("featuredGifDescription").textContent =
+    category + " · Animated visualisation from the uploaded project files.";
+  document.getElementById("openGifLink").href = src;
+}
+
+function renderGifs() {
+  const gallery = document.getElementById("gifGallery");
+  gallery.replaceChildren();
+  gifs.forEach(([file, title, category]) => {
+    gallery.appendChild(makeCard(GIFS + file, title, category + " animation", title));
+  });
+  document.getElementById("gifSelect").addEventListener("change", showFeaturedGif);
+  showFeaturedGif();
+}
+
+function renderBars(bars) {
+  const chart = document.getElementById("indicatorChart");
+  chart.replaceChildren();
+  if (!bars.length) {
+    const message = document.createElement("p");
+    message.className = "muted";
+    message.textContent = "No numerical chart is drawn here because the underlying values are not specified. Explore the related uploaded charts below.";
+    chart.appendChild(message);
+    return;
+  }
+  const max = Math.max(...bars.map(item => item.value));
+  bars.forEach(item => {
+    const row = document.createElement("div");
+    row.className = "bar-row";
+    const label = document.createElement("div");
+    label.className = "bar-label";
+    const name = document.createElement("span");
+    name.textContent = item.label;
+    const value = document.createElement("strong");
+    value.textContent = item.value.toLocaleString(undefined,{maximumFractionDigits:2}) + " km²";
+    label.append(name,value);
+    const track = document.createElement("div");
+    track.className = "bar-track";
+    const fill = document.createElement("div");
+    fill.className = "bar-fill";
+    fill.style.width = (item.value / max * 100) + "%";
+    track.appendChild(fill);
+    row.append(label,track);
+    chart.appendChild(row);
+  });
+}
+
+function showIndicator() {
+  const item = indicators[document.getElementById("indicatorSelect").value];
+  document.getElementById("indicatorTitle").textContent = item.title;
+  document.getElementById("indicatorFinding").textContent = item.finding;
+  document.getElementById("indicatorMethod").textContent = item.method;
+  document.getElementById("indicatorInterpretation").textContent = item.interpretation;
+  const src = MAPS + item.map;
+  const img = document.getElementById("indicatorMap");
+  img.style.display = "block";
+  img.src = src;
+  img.alt = item.title;
+  img.onerror = () => { img.style.display = "none"; };
+  document.getElementById("indicatorMapLink").href = src;
+  renderBars(item.bars);
+}
+
+document.getElementById("mapSearch").addEventListener("input",renderMaps);
+document.getElementById("chartSearch").addEventListener("input",renderCharts);
+document.getElementById("chartCategory").addEventListener("change",renderCharts);
+document.getElementById("indicatorSelect").addEventListener("change",showIndicator);
+
+renderGifs();
+renderMaps();
+renderCharts();
+showIndicator();
+</script>
+</body>
+</html>
+
