@@ -124,7 +124,7 @@ section { padding: 60px 0; }
 }
 h2 { font-size: clamp(1.8rem, 3vw, 2.6rem); line-height: 1.12; letter-spacing: -.035em; margin: 8px 0; }
 .section-head p { color: var(--muted); max-width: 470px; margin: 0; }
-.projects { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.projects { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
 .project {
   background: var(--card);
   border: 1px solid var(--line);
@@ -148,11 +148,26 @@ h2 { font-size: clamp(1.8rem, 3vw, 2.6rem); line-height: 1.12; letter-spacing: -
 }
 .project:nth-child(2) .project-top { background: linear-gradient(135deg, #e5dfd2, #f1e9dc); color: #705a3d; }
 .project:nth-child(3) .project-top { background: linear-gradient(135deg, #d8e1e8, #e9eef1); color: #3d5c6e; }
+.project:nth-child(4) .project-top { background: linear-gradient(135deg, #c9dfd2, #e6eee2); color: #244d3b; }
 .project-body { padding: 22px; display: flex; flex-direction: column; flex: 1; }
 .project h3 { font-size: 1.12rem; line-height: 1.3; margin: 0 0 10px; }
 .project p { color: var(--muted); font-size: .93rem; margin: 0 0 20px; }
 .project a { color: var(--green); font-weight: 750; text-decoration: none; margin-top: auto; }
 .project a:hover { text-decoration: underline; }
+.project.featured { border-color: #b8cdbd; }
+.project.featured .project-body { background: #fbfdf9; }
+.project.featured .project-top { height: 145px; }
+.project-number { display: block; font-size: .7rem; opacity: .8; margin-bottom: 4px; }
+.project-badge {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: .75rem;
+  color: var(--green);
+  background: var(--accent);
+  padding: 5px 10px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
 .about-grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: 48px; }
 .about-copy { color: var(--muted); max-width: 690px; }
 .tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
@@ -250,6 +265,21 @@ footer { padding: 28px 0 38px; color: var(--muted); font-size: .84rem; }
         <h3>European Urban Mobility &amp; Climate Policy</h3>
         <p>A report examining how European urban policies balance accessibility, connectivity, and climate neutrality, using Milan as a case study.</p>
         <a href="03_Research_Reports/Sadiya_Sharmin_EU_Urban_Mobility_Climate_Policy_Report.pdf" target="_blank" rel="noopener">Open research report PDF ↗</a>
+      </div>
+    </article>
+
+    <article class="project featured">
+      <div class="project-top">
+        <div>
+          <span class="project-number">04 / Interactive study</span>
+          Ahmedabad Urban Climate Analysis
+        </div>
+      </div>
+      <div class="project-body">
+        <span class="project-badge">GIS · Remote sensing · Climate</span>
+        <h3>Ahmedabad Urban Climate Explorer</h3>
+        <p>An interactive exploration of urban expansion, vegetation, land surface temperature, rainfall, terrain, and preliminary flood susceptibility across the AUDA region from 2015 to 2025. Explore animated GIFs, maps, charts, and key indicators.</p>
+        <a href="ahmedabad.html">Explore interactive study ↗</a>
       </div>
     </article>
   </div>
